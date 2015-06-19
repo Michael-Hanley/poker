@@ -16,7 +16,7 @@ struct card_struct{
 void intro();
 void get_cards(card_struct[]);
 void shuffle(card_struct[]);
-void draw(card_struct[]);
+void draw(card_struct[], int, int);
 
 const int NUM_CARDS = 52;
 const int FLOP = 3;
@@ -33,7 +33,7 @@ int main()
     intro();                        //introduces the poker program
     get_cards(card);                //fills the data struct will cards
     shuffle(card);                  //shuffles cards
-    draw(card);                     //draw 2 cards
+    draw(card, NUM_CARDS, 0);                     //draw 2 cards
 
 
 
@@ -118,7 +118,7 @@ void shuffle(card_struct card[])
 //draws 2 cards from the deck
 //
 //
-void draw(card_struct card[], int num_cards, int count, int &count)
+void draw(card_struct card[], int num_cards, int count)
 {
     int draw = 0;
     //initial draw
@@ -126,6 +126,6 @@ void draw(card_struct card[], int num_cards, int count, int &count)
     for (draw = 0; draw <num_cards; draw++)
     {
         cout << card[card[count].shuffle].full_name << endl;
-        count--;
+        count++;
     }
 }
