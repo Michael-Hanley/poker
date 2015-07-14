@@ -41,11 +41,11 @@ int main()
 {
     card_struct *card=NULL;
     card = new card_struct[NUM_CARDS];
-    int count = 0;
+    
     int hand[NUM_CARDS];
     char again;
     do{
-
+    int count = 0;
     intro();                        //introduces the poker program
     get_cards(card);                //fills the data struct will cards
     shuffle(card);                  //shuffles cards
