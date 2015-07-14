@@ -32,6 +32,7 @@ void play(card_struct[], int&, int hand[]);
 void shuffle(card_struct[]);
 
 const int NUM_CARDS = 52;
+const int NUM_RANK=12;
 const int DRAW = 2;
 const int FLOP = 3;
 const int TURN = 1;
@@ -51,13 +52,65 @@ int main()
     shuffle(card);                  //shuffles cards
     play(card, count, hand);
     BubbleSort(card, count, hand);
-
-    int i;
-    for (i=0;i<count;i++)
-    {
-        cout << card[hand[i]].full_name << endl;
-    }
     
+    string suite[4] = { "Spades", "Clubs", "Hearts", "Diamonds" };
+    string rank[13] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
+    int i = 0;
+    string answer;
+    string temp;
+    int x;
+    int k;
+    int j;
+    for (j = 0; i<count; j++)
+    {
+        cout << card[hand[j]].full_name << endl;
+    }
+    do
+    {
+        for (x=NUM_RANK;x>0;x--)
+        { 
+            if (card[hand[k]].rank == rank[x]) 
+            {
+                while (card[hand[k]].rank == card[hand[k+1]].rank)
+                { 
+                    k++;
+                }
+                if (card[hand[k + 1]].rank == rank[x - 1])
+                { 
+                    while (card[hand[k + 1]].rank == card[hand[k + 2]].rank)
+                    {
+                        k++;
+                    }
+                    if (card[hand[k + 2]].rank == rank[x - 2])
+                    {
+                        while (card[hand[k + 2]].rank == card[hand[k + 3]].rank)
+                        {
+                            k++;
+                        }
+                        if (card[hand[k + 3]].rank == rank[x - 3])
+                        {
+                            while (card[hand[k + 3]].rank == card[hand[k + 4]].rank)
+                            {
+                                k++;
+                            }
+                            if (card[hand[k + 4]].rank == rank[x - 4])
+                            {
+                                answer = "Straight!!";
+                            }
+                        }
+                    }
+                }  
+            }
+        }
+    k++;
+    } while (k<=count);
+
+    for (j = 0; i<count; j++)
+    {
+        cout << card[hand[j]].full_name << endl;
+    }
+
+    cout << answer << endl;
     memset(hand, 0, sizeof(hand));
     cout << "Would you like to run it again?(y/n)";
     cin >> again;
@@ -115,13 +168,13 @@ void play(card_struct card[], int &count, int *hand)
     int bcount = 0;
     cout << "Your cards: " << endl;
     draw(card, DRAW, count, bcount, hand);     //player draws
-    bcount++;                //burn
+    bcount++;                                    //burn
     cout << "The Flop:" << endl;        
     draw(card, FLOP, count, bcount, hand);     // the flop
-    bcount++;                            //burn
+    bcount++;                                     //burn
     cout << "The Turn" << endl;
     draw(card, TURN, count, bcount, hand);     //the turn
-    bcount++;                          //burn
+    bcount++;                                   //burn
     cout << "The River" << endl;   
     draw(card, RIVER, count, bcount, hand);    //the river
 }
