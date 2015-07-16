@@ -32,7 +32,7 @@ void play(card_struct[], int&, int hand[]);
 void shuffle(card_struct[]);
 
 const int NUM_CARDS = 52;
-const int NUM_RANK=12;
+const int NUM_RANK=14;
 const int DRAW = 2;
 const int FLOP = 3;
 const int TURN = 1;
@@ -54,19 +54,44 @@ int main()
     BubbleSort(card, count, hand);
     
     string suite[4] = { "Spades", "Clubs", "Hearts", "Diamonds" };
-    string rank[13] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
-    int i = 0;
+    string rank[14] = { "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
     string answer;
-    string temp;
     int x;
-    int k;
+    int k=0;
     int j;
-    for (j = 0; i<count; j++)
+    int s_count=0;
+    for (j = 0; j<count; j++)
     {
         cout << card[hand[j]].full_name << endl;
     }
+    x = NUM_RANK-1;
+    while (x>0)
+    { 
+            while (s_count<5 && card[hand[k]].rank == rank[x])
+            { 
+                
+                k++;
+                s_count++;
+                while(card[hand[k]].rank == rank[x])
+                     k++;
+                x--;
+            }
+        x--;  
+        if (s_count < 5)
+            s_count = 0;  
+    }   
+    if (s_count > 4)
+        answer="Straight";
+    
+
+    cout<< answer << endl;
+    /*
     do
     {
+        while (card[hand[k]].rank == card[hand[k + 1]].rank)
+        {
+            k++;
+        }
         for (x=NUM_RANK;x>0;x--)
         { 
             if (card[hand[k]].rank == rank[x]) 
@@ -103,9 +128,9 @@ int main()
             }
         }
     k++;
-    } while (k<=count);
-
-    for (j = 0; i<count; j++)
+    } while (k<=NUM_RANK);
+*/
+    for (j = 0; j<count; j++)
     {
         cout << card[hand[j]].full_name << endl;
     }
