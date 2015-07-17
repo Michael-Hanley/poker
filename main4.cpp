@@ -56,7 +56,6 @@ int main()
     string suite[4] = { "Spades", "Clubs", "Hearts", "Diamonds" };
     string rank[14] = { "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
     string answer;
-    int x;
     int k=0;
     int j;
     int s_count=0;
@@ -64,27 +63,32 @@ int main()
     {
         cout << card[hand[j]].full_name << endl;
     }
-    x = NUM_RANK-1;
-    while (x>0)
+    int x = NUM_RANK-1;
+    while (x > 0 && k < count)
     { 
-            while (s_count<5 && card[hand[k]].rank == rank[x])
-            { 
-                
+        while (s_count<5 && card[hand[k]].rank == rank[x] && k<count)
+        {  
+            k++;
+            s_count++;
+            cout << "B";
+            x--;
+            while(card[hand[k]].rank == rank[x+1] && k<count)     
+            {
                 k++;
-                s_count++;
-                while(card[hand[k]].rank == rank[x])
-                     k++;
-                x--;
+                cout << "H";
             }
-        x--;  
+        }
+        cout << "j";
+            x--;  
         if (s_count < 5)
             s_count = 0;  
     }   
     if (s_count > 4)
-        answer="Straight";
+        answer = "Straight";
+    else
+        answer = "not straight"; 
     
-
-    cout<< answer << endl;
+    cout << "b";    cout<< answer << endl;
     /*
     do
     {
