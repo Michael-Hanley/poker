@@ -54,7 +54,7 @@ int main()
     BubbleSort(card, count, hand);
     
     string suite[4] = { "Spades", "Clubs", "Hearts", "Diamonds" };
-    string rank[14] = { "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
+    int rank_num[14] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
     string answer;
     int k=0;
     int j;
@@ -63,32 +63,50 @@ int main()
     {
         cout << card[hand[j]].full_name << endl;
     }
+    int d=0;
+    int r=0;
+    int straight[7];
+
+    do{
+        if (card[hand[d]].rank_num == card[hand[d + 1]].rank_num)
+            d++;
+        if (card[hand[d]].rank_num != card[hand[d + 1]].rank_num)
+        {
+            straight[r] = hand[d];
+            d++;
+            r++;
+        }
+    } while (d < count);
+
+    int q;
+    for(q=0;q<r;q++)
+    { 
+    cout << endl;
+    cout << card[straight[q]].full_name << endl;
+    }
+
     int x = NUM_RANK-1;
     while (x > 0 && k < count)
     { 
-        while (s_count<5 && card[hand[k]].rank == rank[x] && k<count)
+        while (card[straight[k]].rank_num == rank_num[x] && 
+            card[straight[k+1]].rank_num == rank_num[x-1])
         {  
             k++;
             s_count++;
-            cout << "B";
             x--;
-            while(card[hand[k]].rank == rank[x+1] && k<count)     
-            {
-                k++;
-                cout << "H";
-            }
         }
-        cout << "j";
+        if (s_count < 4)
+            s_count = 0;
+
             x--;  
-        if (s_count < 5)
-            s_count = 0;  
+            k++;
     }   
-    if (s_count > 4)
+    if (s_count >= 4)
         answer = "Straight";
     else
         answer = "not straight"; 
-    
-    cout << "b";    cout<< answer << endl;
+    cout << s_count<< endl;
+    cout<< answer << endl;
     /*
     do
     {
@@ -134,10 +152,6 @@ int main()
     k++;
     } while (k<=NUM_RANK);
 */
-    for (j = 0; j<count; j++)
-    {
-        cout << card[hand[j]].full_name << endl;
-    }
 
     cout << answer << endl;
     memset(hand, 0, sizeof(hand));
