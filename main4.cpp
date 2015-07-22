@@ -86,20 +86,24 @@ int main()
     }
 
     int x = NUM_RANK-1;
-    while (x > 0 && k < count)
+    while (x >= 0)
     { 
-        while (card[straight[k]].rank_num == rank_num[x] && 
-            card[straight[k+1]].rank_num == rank_num[x-1])
+        if (card[straight[k]].rank_num == rank_num[x] &&
+            card[straight[k+1]].rank_num == rank_num[x - 1])
         {  
             k++;
             s_count++;
             x--;
+            cout << s_count << endl;
         }
-        if (s_count < 4)
+        else if (s_count > 0 && s_count < 4 && card[straight[k+1]].rank_num != rank_num[x - 1])
+        { 
             s_count = 0;
-
-            x--;  
             k++;
+        }
+        cout << s_count << endl;
+        if (s_count < 1 || s_count == 4)
+        x--;
     }   
     if (s_count >= 4)
         answer = "Straight";
