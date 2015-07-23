@@ -30,6 +30,8 @@ void BubbleSort(card_struct[], int, int hand[]);
 void Swap(card_struct &a, card_struct &b);
 void play(card_struct[], int&, int hand[]);
 void shuffle(card_struct[]);
+void  rid_dupe(card_struct[], int, int hand[], int straight[]);
+void straight_check(card_struct[], int straight[], string&);
 
 const int NUM_CARDS = 52;
 const int NUM_RANK=14;
@@ -37,12 +39,14 @@ const int DRAW = 2;
 const int FLOP = 3;
 const int TURN = 1;
 const int RIVER = 1;
+const int HAND = 6;
 
 int main()
 {
     card_struct *card=NULL;
     card = new card_struct[NUM_CARDS];
-    
+    int straight[HAND];
+    string answer;
     int hand[NUM_CARDS];
     char again;
     do{
@@ -52,110 +56,14 @@ int main()
     shuffle(card);                  //shuffles cards
     play(card, count, hand);
     BubbleSort(card, count, hand);
-    
-    string suite[4] = { "Spades", "Clubs", "Hearts", "Diamonds" };
-    int rank_num[14] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-    string answer;
-    int k=0;
-    int j;
-    int s_count=0;
-    for (j = 0; j<count; j++)
-    {
-        cout << card[hand[j]].full_name << endl;
-    }
-    int d=0;
-    int r=0;
-    int straight[7];
+    rid_dupe(card, count, hand, straight);
+    straight_check(card, straight, answer);
 
-    do{
-        if (card[hand[d]].rank_num == card[hand[d + 1]].rank_num)
-            d++;
-        if (card[hand[d]].rank_num != card[hand[d + 1]].rank_num)
-        {
-            straight[r] = hand[d];
-            d++;
-            r++;
-        }
-    } while (d < count);
 
-    int q;
-    for(q=0;q<r;q++)
-    { 
-    cout << endl;
-    cout << card[straight[q]].full_name << endl;
-    }
 
-    int x = NUM_RANK-1;
-    while (x >= 0)
-    { 
-        if (card[straight[k]].rank_num == rank_num[x] &&
-            card[straight[k+1]].rank_num == rank_num[x - 1])
-        {  
-            k++;
-            s_count++;
-            x--;
-            cout << s_count << endl;
-        }
-        else if (s_count > 0 && s_count < 4 && card[straight[k+1]].rank_num != rank_num[x - 1])
-        { 
-            s_count = 0;
-            k++;
-        }
-        cout << s_count << endl;
-        if (s_count < 1 || s_count == 4)
-        x--;
-    }   
-    if (s_count >= 4)
-        answer = "Straight";
-    else
-        answer = "not straight"; 
-    cout << s_count<< endl;
+
     cout<< answer << endl;
-    /*
-    do
-    {
-        while (card[hand[k]].rank == card[hand[k + 1]].rank)
-        {
-            k++;
-        }
-        for (x=NUM_RANK;x>0;x--)
-        { 
-            if (card[hand[k]].rank == rank[x]) 
-            {
-                while (card[hand[k]].rank == card[hand[k+1]].rank)
-                { 
-                    k++;
-                }
-                if (card[hand[k + 1]].rank == rank[x - 1])
-                { 
-                    while (card[hand[k + 1]].rank == card[hand[k + 2]].rank)
-                    {
-                        k++;
-                    }
-                    if (card[hand[k + 2]].rank == rank[x - 2])
-                    {
-                        while (card[hand[k + 2]].rank == card[hand[k + 3]].rank)
-                        {
-                            k++;
-                        }
-                        if (card[hand[k + 3]].rank == rank[x - 3])
-                        {
-                            while (card[hand[k + 3]].rank == card[hand[k + 4]].rank)
-                            {
-                                k++;
-                            }
-                            if (card[hand[k + 4]].rank == rank[x - 4])
-                            {
-                                answer = "Straight!!";
-                            }
-                        }
-                    }
-                }  
-            }
-        }
-    k++;
-    } while (k<=NUM_RANK);
-*/
+   
 
     cout << answer << endl;
     memset(hand, 0, sizeof(hand));
@@ -340,7 +248,7 @@ void  BubbleSort(card_struct card[], int count, int *hand)
 }
 //
 //
-//
+//swaps two cars
 //
 //
 void Swap(card_struct &a, card_struct &b)
@@ -350,3 +258,59 @@ void Swap(card_struct &a, card_struct &b)
     a = b;
     b = temp;
 } 
+//
+//
+//Rid the hand of duplicates
+//
+//
+void  rid_dupe(card_struct card[], int count, int *hand, int *straight)       
+{
+    int d = 0;
+    int r = 0;
+
+    do{
+        if (card[hand[d]].rank_num == card[hand[d + 1]].rank_num)
+            d++;
+        if (card[hand[d]].rank_num != card[hand[d + 1]].rank_num)
+        {
+            straight[r] = hand[d];
+            d++;
+            r++;
+        }
+    } while (d < count);
+}
+//
+//
+//
+//
+//
+void straight_check(card_struct card[], int *straight, string &answer)
+{
+    int rank_num[14] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+    int k = 0;
+    int s_count = 0;
+    int x = NUM_RANK - 1;
+    while (x >= 0)
+    {
+        if (card[straight[k]].rank_num == rank_num[x] &&
+            card[straight[k + 1]].rank_num == rank_num[x - 1])
+        {
+            k++;
+            s_count++;
+            x--;
+            cout << s_count << endl;
+        }
+        else if (s_count > 0 && s_count < 4 && card[straight[k + 1]].rank_num != rank_num[x - 1])
+        {
+            s_count = 0;
+            k++;
+        }
+        cout << s_count << endl;
+        if (s_count < 1 || s_count == 4)
+            x--;
+    }
+    if (s_count >= 4)
+        answer = "Straight";
+    else
+        answer = "not straight";
+}
