@@ -56,15 +56,37 @@ int main()
     shuffle(card);                  //shuffles cards
     play(card, count, hand);
     BubbleSort(card, count, hand);
-    rid_dupe(card, count, hand, straight);
-    straight_check(card, straight, answer);
 
-
-
-
-    cout<< answer << endl;
-   
-
+  //  rid_dupe(card, count, hand, straight);
+  //  straight_check(card, straight, answer);
+    string suite[4] = { "Spades", "Clubs", "Hearts", "Diamonds" };
+    int rank_num[14] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+    int suite_count[7]; 
+    int k = 0;
+    int s_count = 0;
+    int x = 0;
+    do{
+        while (x < count)
+        {
+            if (card[hand[k]].rank_num == card[hand[x]].rank_num)
+            {
+                
+                s_count++;
+            } 
+            x++;
+        }
+        suite_count[k] = s_count;
+        s_count = 0;
+        x=0;
+        k++;
+    }
+    while (k < count);
+    k=0;
+    while (k < count)
+    {
+        cout << suite_count[k] << endl;
+        k++;
+    }
     cout << answer << endl;
     memset(hand, 0, sizeof(hand));
     cout << "Would you like to run it again?(y/n)";
