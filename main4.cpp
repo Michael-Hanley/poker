@@ -30,7 +30,7 @@ void BubbleSort(card_struct[], int, int hand[]);
 void Swap(card_struct &a, card_struct &b);
 void play(card_struct[], int&, int hand[]);
 void shuffle(card_struct[]);
-void  rid_dupe(card_struct[], int, int hand[], int straight[]);
+void rid_dupe(card_struct[], int, int hand[], int straight[]);
 void straight_check(card_struct[], int straight[], string&);
 
 const int NUM_CARDS = 52;
@@ -298,14 +298,12 @@ void straight_check(card_struct card[], int *straight, string &answer)
             k++;
             s_count++;
             x--;
-            cout << s_count << endl;
         }
         else if (s_count > 0 && s_count < 4 && card[straight[k + 1]].rank_num != rank_num[x - 1])
         {
             s_count = 0;
             k++;
         }
-        cout << s_count << endl;
         if (s_count < 1 || s_count == 4)
             x--;
     }
