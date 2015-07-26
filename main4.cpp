@@ -20,6 +20,7 @@ struct card_struct{
     int count;
     int hand;
     int rank_num;
+    int suite_num;
 
 };
 
@@ -32,6 +33,7 @@ void play(card_struct[], int&, int hand[]);
 void shuffle(card_struct[]);
 void rid_dupe(card_struct[], int, int hand[], int straight[]);
 void straight_check(card_struct[], int straight[], string&);
+void match_check(card_struct[], string&, int, int hand[]);
 
 const int NUM_CARDS = 52;
 const int NUM_RANK=14;
@@ -39,15 +41,15 @@ const int DRAW = 2;
 const int FLOP = 3;
 const int TURN = 1;
 const int RIVER = 1;
-const int HAND = 6;
+const int HAND = 7;
 
 int main()
 {
     card_struct *card=NULL;
     card = new card_struct[NUM_CARDS];
-    int straight[HAND];
     string answer;
-    int hand[NUM_CARDS];
+    int hand[HAND];
+    int straight[HAND];
     char again;
     do{
     int count = 0;
@@ -57,35 +59,38 @@ int main()
     play(card, count, hand);
     BubbleSort(card, count, hand);
 
-  //  rid_dupe(card, count, hand, straight);
-  //  straight_check(card, straight, answer);
-    string suite[4] = { "Spades", "Clubs", "Hearts", "Diamonds" };
-    int rank_num[14] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
-    int suite_count[7]; 
+    match_check(card, answer, count, hand);
+    if (answer != "Full House" && answer != "Four of a Kind!!")
+    { 
+        rid_dupe(card, count, hand, straight);
+        straight_check(card, straight, answer);
+    }
+     
+
     int k = 0;
-    int s_count = 0;
     int x = 0;
+    int f_count = 0;
+    int suite_count[HAND];
+
     do{
-        while (x < count)
-        {
-            if (card[hand[k]].rank_num == card[hand[x]].rank_num)
-            {
-                
-                s_count++;
-            } 
+        while (x < HAND)
+        { 
+            if (card[hand[k]].suite_num = card[hand[x]].suite_num)
+            { 
+                f_count++;
+            }  
             x++;
         }
-        suite_count[k] = s_count;
-        s_count = 0;
+        
+        suite_count[k] = f_count;
+        f_count=0;
         x=0;
         k++;
-    }
-    while (k < count);
-    k=0;
-    while (k < count)
-    {
-        cout << suite_count[k] << endl;
-        k++;
+    } while (k < HAND);
+
+    for (k=0;k<HAND;k++)
+    { 
+    cout << suite_count[k] << endl;
     }
     cout << answer << endl;
     memset(hand, 0, sizeof(hand));
@@ -98,43 +103,7 @@ int main()
     return 0;
 
 }
-    /***************************************************************
-    string suite[4] = { "Spades", "Clubs", "Hearts", "Diamonds" };
-    string rank[13] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
-    int i = 0;
-    string answer;
-    string temp;
-
-    if ()
-
-
-       
- do{   
- while(i < count)
-    {   
-        if (rank[card[i].shuffle] == rank[card[i + 1].shuffle])
-        {
-            answer = "Pair";
-        }
-        i++;
-    }
-    } while (x <)
-    while (i < 13)
-    {
-        
-
-
-        else if((*rank[card[i].shuffle]) < (*rank[card[i + 1].shuffle))
-        {
-            answer = card[i].shuffle
-        }
-
-
-
-    i++;
-    }
-    cout << "grats you got a " << answer;
-    *****************************************************/
+   
 //
 //
 //
@@ -184,6 +153,7 @@ void get_cards(card_struct card[])
             card[card_count].rank = rank[rank_count];
             card[card_count].rank_num = rank_count;
             card[card_count].suite = suite[suite_count];
+            card[card_count].suite_num = suite_count;
             card[card_count].full_name = card[card_count].rank + " " + "of" + " " + card[card_count].suite;
             card[card_count].count=card_count;
             rank_count++;
@@ -331,6 +301,58 @@ void straight_check(card_struct card[], int *straight, string &answer)
     }
     if (s_count >= 4)
         answer = "Straight";
-    else
-        answer = "not straight";
+}
+//
+//
+// Checks for High card through three of a kind, Full House, And Four of a Kind
+//
+//
+void match_check(card_struct card[], string &answer, int count, int *hand)
+{
+    int rank_num[14] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 }; //ranks ranked by number
+    int pair = 0;     //counter representing number of pairs
+    int three = 0;    //counter representing number of three of a kinds
+    int four = 0;     //counter representing number of four of a kinds
+    int rank_count[7];  // Array for the rankings of the ranks of the cards
+    int k = 0;
+    int s_count = 0;
+    int x = 0;
+    do{
+        while (x < count)
+        {
+            if (card[hand[k]].rank_num == card[hand[x]].rank_num)
+            {
+
+                s_count++;
+            }
+            x++;
+        }
+        rank_count[k] = s_count;
+        s_count = 0;
+        x = 0;
+        k++;
+    } while (k < count);
+    k = 0;
+    while (k < count)
+    {
+        if (rank_count[k] == 2)
+            pair++;
+        if (rank_count[k] == 3)
+            three++;
+        if (rank_count[k] == 4)
+            four++;
+        k++;
+    }
+    k = 0;
+    answer = card[hand[k]].full_name;
+    if (pair == 2)
+        answer = "Pair";
+    if (pair >= 4)
+        answer = "Two Pair!";
+    if (three == 3)
+        answer = "Three if a kind!";
+    if (pair >= 2 && three > 2 || three == 6)
+        answer = "Full House";
+    if (four == 4)
+        answer = "Four of a Kind!!";
 }
