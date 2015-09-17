@@ -13,14 +13,14 @@ pasaqualI@gmail.com
 
 using namespace std;
 struct card_struct{
-    string rank;
-    string suite;
-    string full_name;
-    int shuffle;
-    int count;
-    int hand;
-    int rank_num;
-    int suite_num;
+    string rank;           // rank of the card Ace - King
+    string suite;          // suite of the card (club, hearts, spades, diamonds)
+    string full_name;      // full concatenated name of the card
+    int shuffle;           // preshuffled array of numbers 0-51 representing 52 cards
+    int count;             // the count of the 52 cards that have been drawn in random order
+    int hand;              // the count of the cars that have been drawm to the players hand
+    int rank_num;          // rank of the ranks, more powerful the rank the 
+    int suite_num;         // representation of the 4 suites 0-3
 
 };
 
@@ -113,16 +113,16 @@ void play(card_struct card[], int &count, int *hand)
 { 
     int bcount = 0;
     cout << "Your cards: " << endl;
-    draw(card, DRAW, count, bcount, hand);     //player draws
-    bcount++;                                    //burn
+    draw(card, DRAW, count, bcount, hand);      //player draws
+    bcount++;                                   //burn
     cout << "The Flop:" << endl;        
-    draw(card, FLOP, count, bcount, hand);     // the flop
-    bcount++;                                     //burn
+    draw(card, FLOP, count, bcount, hand);      // the flop
+    bcount++;                                   //burn
     cout << "The Turn" << endl;
-    draw(card, TURN, count, bcount, hand);     //the turn
+    draw(card, TURN, count, bcount, hand);      //the turn
     bcount++;                                   //burn
     cout << "The River" << endl;   
-    draw(card, RIVER, count, bcount, hand);    //the river
+    draw(card, RIVER, count, bcount, hand);     //the river
 }
 // 
 //
