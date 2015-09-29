@@ -350,7 +350,7 @@ void match_check(card_struct card[], string &answer, int count, int *hand)
     if (pair >= 4)
         answer = "Two Pair!";
     if (three == 3)
-        answer = "Three if a kind!";
+        answer = "Three of a kind!";
     if (pair >= 2 && three > 2 || three == 6)
         answer = "Full House";
     if (four == 4)
