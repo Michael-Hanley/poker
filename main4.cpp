@@ -13,14 +13,14 @@ pasaqualI@gmail.com
 
 using namespace std;
 struct card_struct{
-    string rank;           // rank of the card Ace - King
-    string suite;          // suite of the card (club, hearts, spades, diamonds)
-    string full_name;      // full concatenated name of the card
-    int shuffle;           // preshuffled array of numbers 0-51 representing 52 cards
-    int count;             // the count of the 52 cards that have been drawn in random order
-    int hand;              // the count of the cars that have been drawm to the players hand
-    int rank_num;          // rank of the ranks, more powerful the rank the 
-    int suite_num;         // representation of the 4 suites 0-3
+    string rank;
+    string suite;
+    string full_name;
+    int shuffle;
+    int count;
+    int hand;
+    int rank_num;
+    int suite_num;
 
 };
 
@@ -31,7 +31,7 @@ void BubbleSort(card_struct[], int, int hand[]);
 void Swap(card_struct &a, card_struct &b);
 void play(card_struct[], int&, int hand[]);
 void shuffle(card_struct[]);
-void rid_dupe(card_struct[], int, int hand[], int straight[]);
+void rid_dupe(card_struct[],  int hand[], int straight[]);
 void straight_check(card_struct[], int straight[], string&);
 void match_check(card_struct[], string&, int, int hand[]);
 
@@ -42,6 +42,7 @@ const int FLOP = 3;
 const int TURN = 1;
 const int RIVER = 1;
 const int HAND = 7;
+const int STRAIGHT = 5;
 
 int main()
 {
@@ -58,15 +59,14 @@ int main()
     shuffle(card);                  //shuffles cards
     play(card, count, hand);
     BubbleSort(card, count, hand);
-
     match_check(card, answer, count, hand);
+	
     if (answer != "Full House" && answer != "Four of a Kind!!")
     { 
-        rid_dupe(card, count, hand, straight);
-        straight_check(card, straight, answer);
+          rid_dupe(card, hand, straight);
+          straight_check(card, straight, answer);
     }
-     
-
+	/*
     int k = 0;
     int x = 0;
     int f_count = 0;
@@ -87,16 +87,20 @@ int main()
         x=0;
         k++;
     } while (k < HAND);
-
+	
     for (k=0;k<HAND;k++)
     { 
     cout << suite_count[k] << endl;
     }
+	*/
     cout << answer << endl;
-    memset(hand, 0, sizeof(hand));
+
+
     cout << "Would you like to run it again?(y/n)";
     cin >> again;
     cin.ignore(20, '\n');
+
+
     again = toupper(again);
     } while (again == 'Y');
     delete[] card;
@@ -113,16 +117,16 @@ void play(card_struct card[], int &count, int *hand)
 { 
     int bcount = 0;
     cout << "Your cards: " << endl;
-    draw(card, DRAW, count, bcount, hand);      //player draws
-    bcount++;                                   //burn
+    draw(card, DRAW, count, bcount, hand);     //player draws
+    bcount++;                                    //burn
     cout << "The Flop:" << endl;        
-    draw(card, FLOP, count, bcount, hand);      // the flop
-    bcount++;                                   //burn
+    draw(card, FLOP, count, bcount, hand);     // the flop
+    bcount++;                                     //burn
     cout << "The Turn" << endl;
-    draw(card, TURN, count, bcount, hand);      //the turn
+    draw(card, TURN, count, bcount, hand);     //the turn
     bcount++;                                   //burn
     cout << "The River" << endl;   
-    draw(card, RIVER, count, bcount, hand);     //the river
+    draw(card, RIVER, count, bcount, hand);    //the river
 }
 // 
 //
@@ -255,21 +259,23 @@ void Swap(card_struct &a, card_struct &b)
 //Rid the hand of duplicates
 //
 //
-void  rid_dupe(card_struct card[], int count, int *hand, int *straight)       
+void  rid_dupe(card_struct card[],  int *hand, int *straight)       
 {
     int d = 0;
     int r = 0;
 
     do{
-        if (card[hand[d]].rank_num == card[hand[d + 1]].rank_num)
-            d++;
+		if (card[hand[d]].rank_num == card[hand[d + 1]].rank_num)
+			d++;
+			
         if (card[hand[d]].rank_num != card[hand[d + 1]].rank_num)
         {
             straight[r] = hand[d];
             d++;
             r++;
         }
-    } while (d < count);
+		cout << hand[d] << endl;
+      } while (d < STRAIGHT);
 }
 //
 //
@@ -350,7 +356,7 @@ void match_check(card_struct card[], string &answer, int count, int *hand)
     if (pair >= 4)
         answer = "Two Pair!";
     if (three == 3)
-        answer = "Three of a kind!";
+        answer = "Three if a kind!";
     if (pair >= 2 && three > 2 || three == 6)
         answer = "Full House";
     if (four == 4)
