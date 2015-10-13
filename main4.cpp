@@ -31,8 +31,8 @@ void BubbleSort(card_struct[], int, int hand[]);
 void Swap(card_struct &a, card_struct &b);
 void play(card_struct[], int&, int hand[]);
 void shuffle(card_struct[]);
-void rid_dupe(card_struct[],  int hand[], int straight[]);
-void straight_check(card_struct[], int straight[], string&);
+void rid_dupe(card_struct[],  int hand[], int straight[], int&);
+void straight_check(card_struct[], int straight[], string&, int);
 void match_check(card_struct[], string&, int, int hand[]);
 
 const int NUM_CARDS = 52;
@@ -63,8 +63,8 @@ int main()
 	
     if (answer != "Full House" && answer != "Four of a Kind!!")
     { 
-          rid_dupe(card, hand, straight);
-          straight_check(card, straight, answer);
+          rid_dupe(card, hand, straight, hand_count);
+          straight_check(card, straight, answer, hand_count);
     }
 	/*
     int k = 0;
@@ -259,11 +259,11 @@ void Swap(card_struct &a, card_struct &b)
 //Rid the hand of duplicates
 //
 //
-void  rid_dupe(card_struct card[],  int *hand, int *straight)       
+void  rid_dupe(card_struct card[],  int *hand, int *straight, int &hand_count)       
 {
     int d = 0;
     int r = 0;
-
+    int hand_count = 0;
     do{
 		if (card[hand[d]].rank_num == card[hand[d + 1]].rank_num)
 			d++;
@@ -276,19 +276,21 @@ void  rid_dupe(card_struct card[],  int *hand, int *straight)
         }
 		cout << hand[d] << endl;
       } while (d < STRAIGHT);
+      hand_count = r;
 }
 //
 //
 //
 //
 //
-void straight_check(card_struct card[], int *straight, string &answer)
+
+void straight_check(card_struct card[], int *straight, string &answer, int hand_count)
 {
     int rank_num[14] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
     int k = 0;
     int s_count = 0;
     int x = NUM_RANK - 1;
-    while (x >= 0)
+    while (k <= hand_count)
     {
         if (card[straight[k]].rank_num == rank_num[x] &&
             card[straight[k + 1]].rank_num == rank_num[x - 1])
