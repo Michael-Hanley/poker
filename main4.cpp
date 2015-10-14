@@ -310,6 +310,29 @@ void straight_check(card_struct card[], int *straight, string &answer, int hand_
     if (s_count >= 4)
         answer = "Straight";
 }
+/*
+while(k< hand_count)
+{
+	if(card[straight[k]].rank_num) == rank_num[x])
+	{
+		x++;
+		y--;
+		s_count++;
+	}
+	if(card[straight[k]].rank_num != rank[x] && s_count <4)
+	{
+		s_count =0;
+		y--;
+	}
+	if(s_count > 4)
+		temp_answer = "straight";
+	
+}
+
+
+
+
+*/ 
 //
 //
 // Checks for High card through three of a kind, Full House, And Four of a Kind
