@@ -50,7 +50,8 @@ int main()
     card = new card_struct[NUM_CARDS];
     string answer;
     int hand[HAND];
-    int straight[HAND];
+	int straight[HAND];
+	int hand_count = 0;
     char again;
     do{
     int count = 0;
@@ -63,6 +64,7 @@ int main()
 	
     if (answer != "Full House" && answer != "Four of a Kind!!")
     { 
+		
           rid_dupe(card, hand, straight, hand_count);
           straight_check(card, straight, answer, hand_count);
     }
@@ -263,7 +265,7 @@ void  rid_dupe(card_struct card[],  int *hand, int *straight, int &hand_count)
 {
     int d = 0;
     int r = 0;
-    int hand_count = 0;
+
     do{
 		if (card[hand[d]].rank_num == card[hand[d + 1]].rank_num)
 			d++;
@@ -274,65 +276,40 @@ void  rid_dupe(card_struct card[],  int *hand, int *straight, int &hand_count)
             d++;
             r++;
         }
-		cout << hand[d] << endl;
       } while (d < STRAIGHT);
-      hand_count = r;
+	  hand_count = r;
 }
 //
 //
 //
 //
 //
-
 void straight_check(card_struct card[], int *straight, string &answer, int hand_count)
 {
     int rank_num[14] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
     int k = 0;
     int s_count = 0;
     int x = NUM_RANK - 1;
-    while (k <= hand_count)
-    {
-        if (card[straight[k]].rank_num == rank_num[x] &&
-            card[straight[k + 1]].rank_num == rank_num[x - 1])
-        {
-            k++;
-            s_count++;
-            x--;
-        }
-        else if (s_count > 0 && s_count < 4 && card[straight[k + 1]].rank_num != rank_num[x - 1])
-        {
-            s_count = 0;
-            k++;
-        }
-        if (s_count < 1 || s_count == 4)
-            x--;
-    }
-    if (s_count >= 4)
-        answer = "Straight";
-}
-/*
-while(k< hand_count)
-{
-	if(card[straight[k]].rank_num) == rank_num[x])
+	while (k < hand_count)
 	{
-		x++;
-		y--;
-		s_count++;
+		if (card[straight[k]].rank_num == rank_num[x] &&
+			card[straight[k + 1]].rank_num == rank_num[x - 1])
+		{ 
+			k++;
+			x--;
+			s_count++;
+		}
+		if (card[straight[k]].rank_num != rank_num[x] && s_count < 4)
+		{
+			s_count = 0;
+			x--;
+			k++;
+		}
+		}
+			if (s_count >= 4)
+				answer = "straight";
 	}
-	if(card[straight[k]].rank_num != rank[x] && s_count <4)
-	{
-		s_count =0;
-		y--;
-	}
-	if(s_count > 4)
-		temp_answer = "straight";
-	
-}
 
-
-
-
-*/ 
 //
 //
 // Checks for High card through three of a kind, Full House, And Four of a Kind
