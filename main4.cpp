@@ -34,6 +34,8 @@ void shuffle(card_struct[]);
 void rid_dupe(card_struct[], int hand[], int straight[], int&);
 void straight_check(card_struct[], int straight[], string&, int);
 void match_check(card_struct[], string&, int, int hand[]);
+void flush_check(card_struct card[], int, int hand[], string&);
+void check_answer(card_struct card[], int, int hand[], string&);
 
 const int NUM_CARDS = 52;
 const int NUM_RANK = 14;
@@ -52,9 +54,6 @@ int main()
 	card = new card_struct[NUM_CARDS];
 	string answer;
 	int hand[HAND];
-	int straight[HAND];
-	int hand_count = 0;
-	string temp_answer;
 	char again;
 	do {
 		int count = 0;
@@ -62,51 +61,7 @@ int main()
 		get_cards(card);                //fills the data struct will cards
 		shuffle(card);                  //shuffles cards
 		play(card, count, hand);
-		BubbleSort(card, count, hand);
-		match_check(card, answer, count, hand);
-
-		if (answer != "Full House" && answer != "Four of a Kind!!")
-			{
-
-				rid_dupe(card, hand, straight, hand_count);
-				straight_check(card, straight, answer, hand_count);
-			}
-		
-		int k = 0; //counter
-		int suite[SUITE] = { 0, 1, 2, 3 };
-		int x = 0; //counter
-		int f_count = 0; //count of the pairs of matching suits
-		int suite_count[SUITE]; 
-		do{
-			while (x < count)
-				{
-					if (suite[k] == card[hand[x]].suite_num)
-							f_count++;
-					x++;
-				}
-
-			suite_count[k] = f_count;
-			f_count=0;
-			x=0;
-			k++;
-		} while (k < SUITE);
-
-		for (k=0;k<SUITE;k++)
-			{
-				if (suite_count[k] == FLUSH)
-					temp_answer = "Flush";
-			}
-		if (temp_answer == "Flush")
-		{
-			if (temp_answer == "Flush" && answer == "Straight")
-				answer = answer + " " + temp_answer;
-
-			if (temp_answer == "Flush" && answer != "Full House" || answer != "Four of a Kind!!")
-				answer = temp_answer;
-		}
-		
-		
-		cout << answer << endl;
+		check_answer(card, count, hand, answer);
 
 
 		cout << "Would you like to run it again?(y/n)";
@@ -374,4 +329,63 @@ void match_check(card_struct card[], string &answer, int count, int *hand)
 		answer = "Full House";
 	if (four == 4)
 		answer = "Four of a Kind!!";
+}
+
+void flush_check(card_struct card[], int count, int *hand, string &answer)
+{
+	int k = 0;                         //counter
+	int suite[SUITE] = { 0, 1, 2, 3 }; //numerical representation of the 4 suits.
+	int x = 0;                         //counter
+	int f_count = 0;                   //count of the pairs of matching suits
+	int suite_count[SUITE];
+	string temp_answer;
+	do {
+		while (x < count)
+		{
+			if (suite[k] == card[hand[x]].suite_num)
+				f_count++;
+			x++;
+		}
+
+		suite_count[k] = f_count;
+		f_count = 0;
+		x = 0;
+		k++;
+	} while (k < SUITE);
+
+	for (k = 0; k<SUITE; k++)
+	{
+		if (suite_count[k] == FLUSH)
+			temp_answer = "Flush";
+	}
+	if (temp_answer == "Flush")
+	{
+		if (temp_answer == "Flush" && answer == "Straight")
+			answer = answer + " " + temp_answer;
+
+		if (temp_answer == "Flush" && answer != "Full House" || answer != "Four of a Kind!!")
+			answer = temp_answer;
+	}
+
+}
+
+void check_answer(card_struct card[], int count, int *hand, string &answer)
+{
+	int straight[HAND];
+	int hand_count = 0;
+	BubbleSort(card, count, hand);
+	match_check(card, answer, count, hand);
+
+	if (answer != "Full House" && answer != "Four of a Kind!!")
+	{
+
+		rid_dupe(card, hand, straight, hand_count);
+		straight_check(card, straight, answer, hand_count);
+	}
+
+	flush_check(card, count, hand, answer);
+
+
+	cout << endl << endl << answer << endl << endl;
+
 }
