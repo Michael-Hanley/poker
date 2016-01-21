@@ -27,7 +27,7 @@ struct card_struct {
 void intro();
 void get_cards(card_struct[]);
 void draw(card_struct[], int, int&, int&, int hand[]);
-void BubbleSort(card_struct[], int, int hand[]);
+void bubble_sort(card_struct[], int, int hand[]);
 void Swap(card_struct &a, card_struct &b);
 void play(card_struct[], int&, int hand[]);
 void shuffle(card_struct[]);
@@ -191,7 +191,7 @@ void draw(card_struct card[], int num_cards, int &count, int &bcount, int *hand)
 //sorts the cards based on the rank of the cards
 //
 //
-void  BubbleSort(card_struct card[], int count, int *hand)
+void  bubble_sort(card_struct card[], int count, int *hand)
 {
 	int lastpos = count;	//last position to look at this pass
 	bool swapmade;       //when true a swap has been made
@@ -373,7 +373,7 @@ void check_answer(card_struct card[], int count, int *hand, string &answer)
 {
 	int straight[HAND];
 	int hand_count = 0;
-	BubbleSort(card, count, hand);
+	bubble_sort(card, count, hand);
 	match_check(card, answer, count, hand);
 
 	if (answer != "Full House" && answer != "Four of a Kind!!")
