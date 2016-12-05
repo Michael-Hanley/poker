@@ -1,14 +1,10 @@
-
-
 #include<cstdlib>
 #include<iostream>
 #include<iomanip>
 #include<string>
 #include<ctime>
 
-
 using namespace std;
-
 
 const int NUM_CARDS = 52; //number of cards
 const int NUM_RANK = 13; // number of ranks
@@ -20,13 +16,10 @@ const int SUITE_ARRAY[SUITE] = { 0, 1, 2, 3 }; //numerical representation of the
 const string SUITE_NAME[4] = { "Spades", "Clubs", "Hearts", "Diamonds" }; // names of suites
 const string RANK_NUM[NUM_RANK] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" }; //actural names of the ranks
 
-
 void clear();
-
 
 class Deck {
 private:
-
 
 protected:
 	struct card_struct {
@@ -43,9 +36,7 @@ protected:
 	card_struct card[NUM_CARDS];
 	static unsigned seed;
 
-
 public:
-
 
 	Deck()
 	{
@@ -55,11 +46,9 @@ public:
 		shuffle();
 	}
 
-
 	void get_cards();
 	void shuffle();
 };
-
 
 class PlayerHands : public Deck
 {
@@ -72,9 +61,7 @@ class PlayerHands : public Deck
 	int amount_of_chips;
 public:
 
-
 	PlayerHands() : Deck(){}
-
 
 	void draw_main();
 	void finish_hand();
@@ -84,7 +71,6 @@ public:
 	void match_check();
 	void straight_check();
 	void flush_check();
-
 
 	void show_hand() // shows the first two cards given to the player
 	{
@@ -97,7 +83,6 @@ public:
 		cout << "The Flop:" << endl;
 		for(int i = 2; i < 5; i++)
 			cout << card[hand[i]].full_name << endl;
-
 
 		cout << endl;
 	}
@@ -151,7 +136,6 @@ int main()
 	int computer_money = 10000;
 	PlayerHands *player;
 
-
 	cout << "Press enter to start a new game." << endl;
 
 
@@ -163,7 +147,6 @@ int main()
 		for (int i = 0; i < 2; i++)
 			player[i].draw_main();
 
-
 		for (int i = 0; i < 2; i++)
 			player[i].finish_hand();
 
@@ -171,9 +154,7 @@ int main()
 		if (player_money > 0)
 			player[1].set_chips(player_money);
 
-
 		pot_amount = player_actions(player[1]);
-
 
 		clear();
 		player[1].show_chips();
@@ -215,19 +196,15 @@ int player_actions(PlayerHands &player)
 	int bet;
 	int pot_amount = 0; 
 
-
 	for (int i = 0; i < 4; i++)
 	{
 		player.show_chips();
-
 
 		cout << "-------------------------------------------------" << endl << endl;
 		cout << "Amount in the pot: " << pot_amount << endl << endl;
 		cout << "--------------------Your Hand--------------------" << endl << endl;
 
-
 		player.show_hand();
-
 
 			if(i > 0)
 				player.show_flop();
@@ -240,14 +217,12 @@ int player_actions(PlayerHands &player)
 			cout << "-------------------------------------------------" << endl;
 		cout << "Please enter how much you would like to bet, enter 0 to pass: ";
 
-
 		//bet validation
 		do {
 			cin >> bet;
 			if (bet < 0)
 				cout << "Please enter a number greater than -1" << endl; 
 		} while (bet < 0);
-
 
 		pot_amount += bet;
 		player.place_bet(bet);
@@ -257,9 +232,7 @@ int player_actions(PlayerHands &player)
 	}
 	return pot_amount;
 
-
 }
-
 
 void who_wins(PlayerHands &player, PlayerHands &computer_player, int pot_amount)
 {
@@ -285,9 +258,7 @@ void who_wins(PlayerHands &player, PlayerHands &computer_player, int pot_amount)
 		computer_player.won_hand(pot_amount / 2);
 	}
 
-
 }
-
 
 //
 //occupies the struct with 52 playing cards
@@ -369,7 +340,6 @@ void PlayerHands::hand_value()
 	bubble_sort();
 	match_check();
 
-
 	if (answer != "Full House" && answer != "Four of a Kind!!")
 	{
 		straight_check();
@@ -446,10 +416,7 @@ void PlayerHands::match_check()
 		{
 			if (card[hand[k]].rank_num == card[hand[x]].rank_num)
 				s_count++;
-
-
-
-
+			
 			x++;
 		}
 		rank_count[k] = s_count;
@@ -519,10 +486,7 @@ void PlayerHands::straight_check()
 		if (card[hand[k]].rank_num != (card[hand[k + 1]].rank_num + 1) &&
 			card[hand[k]].rank_num != (card[hand[k + 1]].rank_num) && s_count < (STRAIGHT - 1))
 			s_count = 0;
-
-
-
-
+		
 		k++;
 	}
 	if (s_count >= (STRAIGHT - 1))
@@ -544,19 +508,13 @@ void PlayerHands::flush_check()
 	bool flush = false;
 	int sf_count = 0;
 	string temp_answer;
-
-
-
-
+	
 	do {
 		while (x < HAND)
 		{
 			if (SUITE_ARRAY[k] == card[hand[x]].suite_num)
 				f_count++;
-
-
-
-
+			
 			x++;
 		}
 		if (f_count < FLUSH)
@@ -570,23 +528,14 @@ void PlayerHands::flush_check()
 		k++;
 	} while (k < SUITE);
 
-
-
-
 	if (flush == true)
 		temp_answer = "Flush";
-
-
-
 
 	if ((temp_answer == "Flush" && answer != "Full House") || (temp_answer == "Flush" && answer != "Four of a Kind!!"))
 	{
 		answer = temp_answer;
 		hand_power = 5;
 	}
-
-
-
 
 	if (answer == "Flush")
 	{
@@ -620,9 +569,6 @@ void PlayerHands::flush_check()
 		delete[] sflush;
 	}
 }
-
-
-
 
 void clear()
 {
