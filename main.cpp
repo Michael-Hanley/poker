@@ -6,6 +6,7 @@
 
 using namespace std;
 
+const int STARTING_CASH = 1000;
 const int NUM_CARDS = 52; //number of cards
 const int NUM_RANK = 13; // number of ranks
 const int HAND = 7; // number of cards in each persons hand
@@ -17,6 +18,8 @@ const string SUITE_NAME[4] = { "Spades", "Clubs", "Hearts", "Diamonds" }; // nam
 const string RANK_NUM[NUM_RANK] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" }; //actural names of the ranks
 
 void clear();
+void delay();
+void computer_delays();
 
 class Deck {
 private:
@@ -35,9 +38,7 @@ protected:
 	static int count;
 	card_struct card[NUM_CARDS];
 	static unsigned seed;
-
 public:
-
 	Deck()
 	{
 		srand((unsigned int)time(0));
@@ -45,7 +46,6 @@ public:
 		get_cards();
 		shuffle();
 	}
-
 	void get_cards();
 	void shuffle();
 };
@@ -61,7 +61,7 @@ class PlayerHands : public Deck
 	int amount_of_chips;
 public:
 
-	PlayerHands() : Deck(){}
+	PlayerHands() : Deck() {}
 
 	void draw_main();
 	void finish_hand();
@@ -81,7 +81,7 @@ public:
 	void show_flop() // shows the three cards the player can use that are on the table
 	{
 		cout << "The Flop:" << endl;
-		for(int i = 2; i < 5; i++)
+		for (int i = 2; i < 5; i++)
 			cout << card[hand[i]].full_name << endl;
 
 		cout << endl;
@@ -96,13 +96,21 @@ public:
 		cout << "The River:" << endl;
 		cout << card[hand[6]].full_name << endl << endl;
 	}
-	void show_answer() // shows the most powerful hand the places possess
+	void show_player_answer() // shows the most powerful hand the places possess
 	{
-		cout << answer << endl;
+		cout << "Players Hand: " << answer << endl;
+	}
+	void show_computer_answer() // shows the most powerful hand the places possess
+	{
+		cout << "Computer Hand: " << answer << endl;
 	}
 	void show_chips() // couts the amount of chips the player owns 
 	{
 		cout << "Your Chips: $" << amount_of_chips << endl;
+	}
+	void show_computer_chips() // couts the amount of chips the computer owns
+	{
+		cout << "Computer Chips: $" << amount_of_chips << endl;
 	}
 	int get_chips() //returns the amount of chips the player has
 	{
@@ -124,25 +132,41 @@ public:
 	{
 		return hand_power;
 	}
+	int get_intial_hand() //figures out the power of the computers first two cards. MAX VALUE = 24
+	{
+		return card[hand[0]].rank_num + card[hand[1]].rank_num;
+	}
+	int get_flop_power() //figures out the power of the computers first five card. MAX VALUE = 59
+	{
+		return card[hand[0]].rank_num + card[hand[1]].rank_num + card[hand[2]].rank_num + card[hand[3]].rank_num + card[hand[3]].rank_num;
+	}
+	int get_turn_power() //figures out the power of the computers first five card. MAX VALUE = 70
+	{
+		return card[hand[0]].rank_num + card[hand[1]].rank_num + card[hand[2]].rank_num + card[hand[3]].rank_num + card[hand[3]].rank_num + card[hand[4]].rank_num;
+	}
+	int get_river_power() //figures out the power of the computers first five card. MAX VALUE = 81
+	{
+		return card[hand[0]].rank_num + card[hand[1]].rank_num + card[hand[2]].rank_num + card[hand[3]].rank_num + card[hand[3]].rank_num + card[hand[4]].rank_num + card[hand[5]].rank_num;
+	}
 };
 int Deck::count = 0;
-int player_actions(PlayerHands&);
+int player_actions(PlayerHands&, PlayerHands&);
 void who_wins(PlayerHands&, PlayerHands&, int pot_amount);
 int main()
 {
-	int j = 0;
-	int player_money = 10000;
+	int d = 0;
+	int player_money = STARTING_CASH;
 	int pot_amount;
-	int computer_money = 10000;
+	int computer_money = STARTING_CASH;
+	bool end_loop = false;
 	PlayerHands *player;
 
 	cout << "Press enter to start a new game." << endl;
 
-
 	do {
-		cin.clear();
 		cin.ignore(1000, '\n');
 		clear();
+		cout << "\a";
 		player = new PlayerHands[2];
 		for (int i = 0; i < 2; i++)
 			player[i].draw_main();
@@ -150,88 +174,239 @@ int main()
 		for (int i = 0; i < 2; i++)
 			player[i].finish_hand();
 
-
 		if (player_money > 0)
+		{
 			player[1].set_chips(player_money);
+			player[0].set_chips(computer_money);
+		}
 
-		pot_amount = player_actions(player[1]);
+		pot_amount = player_actions(player[1], player[0]);
 
-		clear();
 		player[1].show_chips();
+		player[0].show_computer_chips();
 		cout << "-------------------------------------------------" << endl << endl;
-		cout << "Amount in the pot: " << pot_amount << endl << endl;
+		cout << "Amount in the pot: $" << pot_amount << endl << endl;
 		cout << "--------------------Your Hand--------------------" << endl << endl;
 		player[1].show_hand();
 		player[1].show_flop();
 		player[1].show_turn();
 		player[1].show_river();
-		player[1].show_answer();
-
 
 		for (int i = 0; i < 2; i++)
 			player[i].hand_value();
 
+		cout << "Press enter to see who wins!" << endl << endl;
+		cin.ignore(1000, '\n');
 
-		player[1].show_answer();
+		player[1].show_player_answer();
+		player[0].show_computer_answer();
+
 		cout << "-------------------------------------------------" << endl;
 		who_wins(player[1], player[0], pot_amount);
 		player_money = player[1].get_chips();
 		computer_money = player[0].get_chips();
 
-
 		cin.clear();
 
-
-		cin >> j;
+		if (player_money > 0)
+		{
+			cout << "Another Round? Press 1 to continue, 0 to exit" << endl;
+			cin >> d;
+		}
+		if (d == 0 || player_money <= 0)
+		{
+			end_loop = true;
+		}
+		cin.clear();
 		delete[] player;
-	} while (j != 1);
+	} while (end_loop == false);
+	clear();
+	cin.clear();
+	cin.ignore(1000, '\n');
+	cout << "--------------------GAME OVER--------------------\a" << endl << endl;
+	cin.clear();
+	cin.ignore(1000, '\n');
 }
 //
 //
 //runs through the game and allows the player to bet
 //
 //
-int player_actions(PlayerHands &player)
+int player_actions(PlayerHands &player, PlayerHands &computer_player)
 {
-	int bet;
-	int pot_amount = 0; 
-
+	int bet = 0;
+	char bet_choice;
+	int pot_amount = 0;
+	bool correct_bet = false;
+	bool out_of_chips = false;
+	int computer_power = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		player.show_chips();
-
-		cout << "-------------------------------------------------" << endl << endl;
-		cout << "Amount in the pot: " << pot_amount << endl << endl;
-		cout << "--------------------Your Hand--------------------" << endl << endl;
-
-		player.show_hand();
-
-			if(i > 0)
-				player.show_flop();
-			if (i > 1)
-				player.show_turn();
-			if(i > 2)
-				player.show_river();
-
-
-			cout << "-------------------------------------------------" << endl;
-		cout << "Please enter how much you would like to bet, enter 0 to pass: ";
-
-		//bet validation
 		do {
-			cin >> bet;
-			if (bet < 0)
-				cout << "Please enter a number greater than -1" << endl; 
-		} while (bet < 0);
-
+			player.show_chips();
+			cout << endl;
+			computer_player.show_computer_chips();
+			cout << "-------------------------------------------------" << endl << endl;
+			cout << "Amount in the pot: $" << pot_amount << endl << endl;
+			if (i > 0)
+				cout << "Computer Bet: $" << bet << endl;
+			cout << "--------------------Your Hand--------------------" << endl << endl;
+			player.show_hand();
+			if (i > 0)
+			{
+				if (i == 1)
+				{
+					cout << "Press enter to show next card." << endl;
+					cin.ignore(1000, '\n');
+				}
+				player.show_flop();
+			}
+			if (i > 1)
+			{
+				if (i == 2)
+				{
+					cout << "Press enter to show next card." << endl;
+					cin.ignore(1000, '\n');
+				}
+				player.show_turn();
+			}
+			if (i > 2)
+			{
+				if (i == 3)
+				{
+					cout << "Press enter to show next card." << endl;
+					cin.ignore(1000, '\n');
+				}
+				player.show_river();
+			}
+			cout << "-------------------------------------------------\a" << endl;
+			cout << "Please enter how much you would like to bet, enter 0 to pass" << endl;
+			cout << "A = $25, B = $50, C = $100" << endl;
+			cin >> bet_choice;
+			if (bet_choice == 'a' || bet_choice == 'A')
+			{
+				bet = 25;
+				correct_bet = true;
+			}
+			if (bet_choice == 'b' || bet_choice == 'B')
+			{
+				bet = 50;
+				correct_bet = true;
+			}
+			if (bet_choice == 'c' || bet_choice == 'C')
+			{
+				bet = 100;
+				correct_bet = true;
+			}
+			if (bet_choice == '0')
+			{
+				bet = 0;
+				correct_bet = true;
+			}
+			if (bet > player.get_chips())
+			{
+				correct_bet = false;
+				out_of_chips = true;
+			}
+			if (correct_bet == false)
+			{
+				clear();
+				if (out_of_chips == true)
+					cout << "Please enter an ammount less than the amount of chips you have" << endl;
+				cout << "Please enter A, B, C, or 0" << endl << endl;
+			}
+		} while (correct_bet == false);
 		pot_amount += bet;
 		player.place_bet(bet);
+		computer_delays();
+		if (i == 0)
+		{
+			computer_power = computer_player.get_intial_hand();
+			if (computer_power < 5)
+			{
+				bet = 0;
+			}
+			if (computer_power >= 5 && computer_power <= 10)
+			{
+				bet = 25;
+			}
+			if (computer_power >= 11 && computer_power <= 16)
+			{
+				bet = 50;
+			}
+			if (computer_power >= 17 && computer_power <= 24)
+			{
+				bet = 100;
+			}
+		}
+		if (i == 1)
+		{
+			computer_power = computer_player.get_flop_power();
+			if (computer_power < 10)
+			{
+				bet = 0;
+			}
+			if (computer_power >= 10 && computer_power <= 22)
+			{
+				bet = 25;
+			}
+			if (computer_power >= 23 && computer_power <= 40)
+			{
+				bet = 50;
+			}
+			if (computer_power >= 41 && computer_power <= 59)
+			{
+				bet = 100;
+			}
+		}
+		if (i == 2)
+		{
+			computer_power = computer_player.get_turn_power();
+			if (computer_power < 20)
+			{
+				bet = 0;
+			}
+			if (computer_power >= 20 && computer_power <= 34)
+			{
+				bet = 25;
+			}
+			if (computer_power >= 35 && computer_power <= 54)
+			{
+				bet = 50;
+			}
+			if (computer_power >= 55 && computer_power <= 70)
+			{
+				bet = 100;
+			}
+		}
+		if (i == 3)
+		{
+			computer_power = computer_player.get_river_power();
+			if (computer_power < 30)
+			{
+				bet = 0;
+			}
+			if (computer_power >= 30 && computer_power <= 41)
+			{
+				bet = 25;
+			}
+			if (computer_power >= 42 && computer_power <= 59)
+			{
+				bet = 50;
+			}
+			if (computer_power >= 60 && computer_power <= 81)
+			{
+				bet = 100;
+			}
+		}
+		cout << bet;
+		pot_amount += bet;
+		computer_player.place_bet(bet);
 		cin.clear();
 		cin.ignore(1000, '\n');
 		clear();
 	}
 	return pot_amount;
-
 }
 
 void who_wins(PlayerHands &player, PlayerHands &computer_player, int pot_amount)
@@ -239,7 +414,6 @@ void who_wins(PlayerHands &player, PlayerHands &computer_player, int pot_amount)
 	int player_power = player.get_hand_power();
 	int computer_power = computer_player.get_hand_power();
 	int win_action = 0;
-
 
 	if (player_power < computer_power)
 	{
@@ -257,7 +431,6 @@ void who_wins(PlayerHands &player, PlayerHands &computer_player, int pot_amount)
 		player.won_hand(pot_amount / 2);
 		computer_player.won_hand(pot_amount / 2);
 	}
-
 }
 
 //
@@ -339,14 +512,11 @@ void PlayerHands::hand_value()
 	int hand_count = 0;
 	bubble_sort();
 	match_check();
-
 	if (answer != "Full House" && answer != "Four of a Kind!!")
 	{
 		straight_check();
 	}
 	flush_check();
-
-
 }
 //
 //
@@ -385,7 +555,7 @@ void PlayerHands::Swap(int k)
 }
 //
 //
-//beginning 2 cards each player recieves
+//
 //
 //
 void PlayerHands::draw_main()
@@ -416,7 +586,7 @@ void PlayerHands::match_check()
 		{
 			if (card[hand[k]].rank_num == card[hand[x]].rank_num)
 				s_count++;
-			
+
 			x++;
 		}
 		rank_count[k] = s_count;
@@ -464,7 +634,6 @@ void PlayerHands::match_check()
 		hand_power = 7;
 	}
 
-
 	delete[] rank_count;
 }
 //
@@ -486,7 +655,7 @@ void PlayerHands::straight_check()
 		if (card[hand[k]].rank_num != (card[hand[k + 1]].rank_num + 1) &&
 			card[hand[k]].rank_num != (card[hand[k + 1]].rank_num) && s_count < (STRAIGHT - 1))
 			s_count = 0;
-		
+
 		k++;
 	}
 	if (s_count >= (STRAIGHT - 1))
@@ -508,13 +677,13 @@ void PlayerHands::flush_check()
 	bool flush = false;
 	int sf_count = 0;
 	string temp_answer;
-	
+
 	do {
 		while (x < HAND)
 		{
 			if (SUITE_ARRAY[k] == card[hand[x]].suite_num)
 				f_count++;
-			
+
 			x++;
 		}
 		if (f_count < FLUSH)
@@ -569,6 +738,14 @@ void PlayerHands::flush_check()
 		delete[] sflush;
 	}
 }
+void computer_delays()
+{
+	clear();
+	cout << "Computer is thinking..." << endl;
+	delay();
+	cout << endl << "Computer is betting..." << endl;
+	delay();
+}
 
 void clear()
 {
@@ -579,6 +756,16 @@ void clear()
 #endif
 }
 
-
-
-
+#ifdef _WIN32
+	#include <windows.h>
+	void delay()
+	{
+		Sleep(3000);
+	}
+#else  /* POSIX */
+	#include <unistd.h>
+	void delay(3000)
+	{
+		usleep(ms * 1000);
+	}
+#endif 
